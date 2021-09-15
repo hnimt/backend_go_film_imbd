@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./;pb";
+
+
+message CrawledFilms {
+    repeated CrawledFilm Films = 1;
+}
+
+message CrawledFilm {
+    string Name = 1;
+    string Year = 2;
+    double Rating = 3;
+}
+
+message ResCrawl {}
+
+service CrawlService {
+    rpc CrawlFilm (CrawledFilms) returns (ResCrawl) {};
+}
