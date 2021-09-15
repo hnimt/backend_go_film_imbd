@@ -3,8 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"micro_backend_film/config/grpc"
-	"micro_backend_film/services/biz/grpc/pb"
+	"micro_backend_film/services/crawler/grpc"
 	"micro_backend_film/services/crawler/handler"
 	"time"
 
@@ -12,9 +11,6 @@ import (
 )
 
 func main() {
-
-	conn := grpc.NewGrpcClient(":8081")
-	c := pb.NewCrawlServiceClient(conn)
 
 	colly := colly.NewCollector()
 	handerCrawl := &handler.HandlerCrawl{
@@ -27,7 +23,7 @@ func main() {
 	for {
 		select {
 		case <-ticker.C:
-			response, err := c.CrawlFilm(context.Background(), msg)
+			response, err := grpc.Client.CrawlFilm(context.Background(), msg)
 			if err != nil {
 				log.Fatalf("Error when calling CrawlFilm: %s name", err)
 			}

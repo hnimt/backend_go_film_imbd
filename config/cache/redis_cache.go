@@ -19,7 +19,7 @@ func ConnectRedis() *redis.Client {
 	return red
 }
 
-func SetCache(red *redis.Client, key string, value []entity.Film) {
+func SetCache(red *redis.Client, key string, value interface{}) {
 	data, err := json.Marshal(value)
 	if err != nil {
 		log.Fatal("marshaling error: ", err)
@@ -31,17 +31,15 @@ func SetCache(red *redis.Client, key string, value []entity.Film) {
 	}
 }
 
-func GetCache(red *redis.Client, key string) ([]entity.Film, error) {
+func GetCache(red *redis.Client, key string, dest interface{}) {
 	var data []entity.Film
 	val, err := red.Get(key).Result()
 	if err != nil {
-		return nil, err
+		log.Println(err)
 	}
 
 	err = json.Unmarshal([]byte(val), &data)
 	if err != nil {
-		return data, err
+		log.Println(err)
 	}
-
-	return data, nil
 }

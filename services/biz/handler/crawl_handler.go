@@ -4,7 +4,7 @@ import (
 	"log"
 	"micro_backend_film/config/cache"
 	"micro_backend_film/pkg/entity"
-	"micro_backend_film/services/biz/grpc/pb"
+	"micro_backend_film/services/biz/pb/pb_crawl"
 	"micro_backend_film/services/biz/repo"
 
 	"github.com/go-redis/redis"
@@ -17,8 +17,8 @@ type CrawlHandler struct {
 	FilmRepo   *repo.FilmRepo
 }
 
-func (ch *CrawlHandler) CrawlFilm(ctx context.Context, req *pb.CrawledFilms) (*pb.ResCrawl, error) {
-	res := &pb.ResCrawl{}
+func (ch *CrawlHandler) CrawlFilm(ctx context.Context, req *pb_crawl.CrawledFilms) (*pb_crawl.ResCrawl, error) {
+	res := &pb_crawl.ResCrawl{}
 	rqFilms := req.Films
 	rpFilms, err := ch.FilmRepo.FindAll()
 	if err != nil || len(rpFilms) == 0 {
@@ -26,12 +26,13 @@ func (ch *CrawlHandler) CrawlFilm(ctx context.Context, req *pb.CrawledFilms) (*p
 		return res, nil
 	}
 
-	cFilms, err := cache.GetCache(ch.RedisCache, "films")
+	var cFilms []entity.Film
+	cache.GetCache(ch.RedisCache, "films", &cFilms)
 	if err != nil || len(cFilms) == 0 {
 		if len(rpFilms) > 0 {
 			log.Println("Set cached by repo")
 			cache.SetCache(ch.RedisCache, "films", rpFilms)
-			cFilms, _ = cache.GetCache(ch.RedisCache, "films")
+			cache.GetCache(ch.RedisCache, "films", &cFilms)
 		}
 	}
 
@@ -40,7 +41,7 @@ func (ch *CrawlHandler) CrawlFilm(ctx context.Context, req *pb.CrawledFilms) (*p
 	return res, nil
 }
 
-func (ch *CrawlHandler) insertFirst(req []*pb.CrawledFilm) {
+func (ch *CrawlHandler) insertFirst(req []*pb_crawl.CrawledFilm) {
 	films := []entity.Film{}
 	for _, v := range req {
 		var film entity.Film
@@ -56,7 +57,7 @@ func (ch *CrawlHandler) insertFirst(req []*pb.CrawledFilm) {
 	log.Println("First Collect")
 }
 
-func (ch *CrawlHandler) updateFilm(cfilms []entity.Film, rqFilms []*pb.CrawledFilm) {
+func (ch *CrawlHandler) updateFilm(cfilms []entity.Film, rqFilms []*pb_crawl.CrawledFilm) {
 
 	for i := 0; i < len(rqFilms); i++ {
 		isInsert := true

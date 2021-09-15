@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"micro_backend_film/services/biz/grpc/pb"
+	"micro_backend_film/services/biz/pb/pb_crawl"
 	"strconv"
 	"strings"
 
@@ -13,12 +13,12 @@ type HandlerCrawl struct {
 	Colly *colly.Collector
 }
 
-func (hc *HandlerCrawl) CrawlFilm() *pb.CrawledFilms {
-	crawledFilms := &pb.CrawledFilms{}
+func (hc *HandlerCrawl) CrawlFilm() *pb_crawl.CrawledFilms {
+	crawledFilms := &pb_crawl.CrawledFilms{}
 
 	hc.Colly.OnHTML("tbody.lister-list", func(e *colly.HTMLElement) {
 		e.ForEach("tr", func(i int, h *colly.HTMLElement) {
-			var crawledFilm pb.CrawledFilm
+			var crawledFilm pb_crawl.CrawledFilm
 			crawledFilm.Name = h.ChildText("td.titleColumn > a")
 
 			year := h.ChildText("td.titleColumn > span.secondaryInfo")
