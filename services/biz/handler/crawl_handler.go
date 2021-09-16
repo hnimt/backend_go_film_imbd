@@ -3,9 +3,9 @@ package handler
 import (
 	"log"
 	"micro_backend_film/config/cache"
-	"micro_backend_film/pkg/entity"
+	"micro_backend_film/common/entity"
 	"micro_backend_film/services/biz/pb/pb_crawl"
-	"micro_backend_film/services/biz/repo"
+	"micro_backend_film/common/repo"
 
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"

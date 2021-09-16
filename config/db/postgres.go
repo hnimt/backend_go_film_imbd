@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"micro_backend_film/pkg/entity"
+	"micro_backend_film/common/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

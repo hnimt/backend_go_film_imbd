@@ -11,7 +11,7 @@ var (
 	JWT_KEY = "asdasdasdasdasd"
 )
 
-func GenToken(email string, role string) (string, error) {
+func GenToken(userId string, role string) (string, error) {
 
 	// claims := JwtCustomClaims{
 	// 	UserId: user.UserID,
@@ -31,7 +31,7 @@ func GenToken(email string, role string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = email
+	claims["userId"] = userId
 	claims["role"] = role
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 

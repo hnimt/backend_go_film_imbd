@@ -2,11 +2,11 @@ package handler
 
 import (
 	"context"
+	"micro_backend_film/common/entity"
+	"micro_backend_film/common/repo"
+	"micro_backend_film/common/security"
 	"micro_backend_film/config/cache"
-	"micro_backend_film/pkg/entity"
-	"micro_backend_film/pkg/security"
 	"micro_backend_film/services/auth/pb"
-	"micro_backend_film/services/auth/repo"
 
 	"github.com/go-redis/redis"
 	"github.com/gofiber/fiber/v2"
@@ -41,12 +41,14 @@ func (ah *AuthHandler) Signup(ctx context.Context, req *pb.SignupReq) (*pb.AuthR
 	}
 
 	ah.UserRepo.SaveUser(user)
-
 	cache.SetCache(ah.RdCache, "user", user)
+
+	token, _ := security.GenToken(user.UserID, user.Role)
 
 	return &pb.AuthRes{
 		Email: req.Email,
 		Role:  role,
+		Token: token,
 	}, nil
 
 }
@@ -71,10 +73,11 @@ func (ah *AuthHandler) Login(ctx context.Context, req *pb.LoginReq) (*pb.AuthRes
 
 	cache.SetCache(ah.RdCache, "user", user)
 
-	result := &pb.AuthRes{
+	token, _ := security.GenToken(user.UserID, user.Role)
+
+	return &pb.AuthRes{
 		Email: user.Email,
 		Role:  user.Role,
-	}
-
-	return result, nil
+		Token: token,
+	}, nil
 }

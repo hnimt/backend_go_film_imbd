@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"micro_backend_film/pkg/security"
+	"micro_backend_film/common/security"
 
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v3"

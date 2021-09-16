@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./;pb";
+
+message ReqAddBookmark {
+    string UserID = 1;
+    string FilmID = 2;
+}
+
+message ResAddBookmark {
+    Film Film = 1;
+}
+
+message ReqDelBookmark {
+    string UserID = 1;
+    string FilmID = 2;
+}
+
+message ResDelBookmark {
+    string Res = 1;
+}
+
+message ReqFindByUser {
+    string UserID = 1;
+}
+
+message ResFindByUser {
+    repeated Film Films = 1;
+}
+
+message Film {
+    string Name = 1;
+    string Year = 2;
+    double Rating = 3;
+}
+
+service BookmarkService {
+    rpc AddBookmark (ReqAddBookmark) returns (ResAddBookmark) {}
+    rpc DelBookmark (ReqDelBookmark) returns (ResDelBookmark) {}
+    rpc FindByUser (ReqFindByUser) returns (ResFindByUser) {}
+}

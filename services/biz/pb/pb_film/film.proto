@@ -5,9 +5,10 @@ package pb_film;
 option go_package = "./;pb_film";
 
 message Film {
-    string Name = 1;
-    string Year = 2;
-    double Rating = 3;
+    string ID = 1;
+    string Name = 2;
+    string Year = 3;
+    double Rating = 4;
 }
 
 message ReqAllFilms {}

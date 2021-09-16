@@ -1,7 +1,7 @@
 package repo
 
 import (
-	"micro_backend_film/pkg/entity"
+	"micro_backend_film/common/entity"
 	"time"
 
 	"gorm.io/gorm"

@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 	"log"
+	"micro_backend_film/common/entity"
+	"micro_backend_film/common/repo"
 	"micro_backend_film/config/cache"
-	"micro_backend_film/pkg/entity"
 	"micro_backend_film/services/biz/pb/pb_film"
-	"micro_backend_film/services/biz/repo"
 
 	"github.com/go-redis/redis"
 )
@@ -20,7 +20,7 @@ func (fh *FilmHandler) AllFilms(ctx context.Context, req *pb_film.ReqAllFilms) (
 	var cFilms []entity.Film
 	cache.GetCache(fh.RedisCache, "films", &cFilms)
 
-	if len(cFilms) == 0 {
+	if cFilms == nil || len(cFilms) == 0 {
 		rpFilms, err := fh.FilmRepo.FindAll()
 		if err != nil {
 			log.Println("AllFilms error allfilms")
@@ -34,6 +34,7 @@ func (fh *FilmHandler) AllFilms(ctx context.Context, req *pb_film.ReqAllFilms) (
 
 	for _, rpFilm := range cFilms {
 		res.Films = append(res.Films, &pb_film.Film{
+			ID:     rpFilm.FilmID,
 			Name:   rpFilm.Name,
 			Year:   rpFilm.Year,
 			Rating: rpFilm.Rating,

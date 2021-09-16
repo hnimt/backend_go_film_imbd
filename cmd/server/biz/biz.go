@@ -2,12 +2,12 @@ package main
 
 import (
 	"log"
+	"micro_backend_film/common/repo"
 	"micro_backend_film/config/cache"
 	"micro_backend_film/config/db"
 	"micro_backend_film/services/biz/handler"
 	"micro_backend_film/services/biz/pb/pb_crawl"
 	"micro_backend_film/services/biz/pb/pb_film"
-	"micro_backend_film/services/biz/repo"
 	"net"
 
 	"google.golang.org/grpc"

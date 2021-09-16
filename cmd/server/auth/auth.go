@@ -6,7 +6,7 @@ import (
 	"micro_backend_film/config/db"
 	"micro_backend_film/services/auth/handler"
 	"micro_backend_film/services/auth/pb"
-	"micro_backend_film/services/auth/repo"
+	"micro_backend_film/common/repo"
 	"net"
 
 	"google.golang.org/grpc"
