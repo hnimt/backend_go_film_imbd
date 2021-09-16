@@ -19,6 +19,7 @@ func main() {
 
 	auth := app.Group("/auth")
 	auth.Post("/signup", authHandler.Signup)
+	auth.Post("/login", authHandler.Login)
 
 	app.Listen(":8080")
 }
