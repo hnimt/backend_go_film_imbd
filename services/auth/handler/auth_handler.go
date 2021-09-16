@@ -2,14 +2,14 @@ package handler
 
 import (
 	"context"
-	"errors"
-	"log"
+	"micro_backend_film/config/cache"
 	"micro_backend_film/pkg/entity"
 	"micro_backend_film/pkg/security"
 	"micro_backend_film/services/auth/pb"
 	"micro_backend_film/services/auth/repo"
 
 	"github.com/go-redis/redis"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
@@ -22,7 +22,10 @@ func (ah *AuthHandler) Signup(ctx context.Context, req *pb.SignupReq) (*pb.AuthR
 
 	isDuplicateEmail, _ := ah.UserRepo.IsDuplicateEmail(req.Email)
 	if !isDuplicateEmail {
-		return nil, errors.New("duplicated email")
+		return nil, &fiber.Error{
+			Code:    fiber.StatusUnauthorized,
+			Message: "Duplicated email",
+		}
 	}
 
 	hashPwd := security.HashAndSalt([]byte(req.Password))
@@ -39,21 +42,39 @@ func (ah *AuthHandler) Signup(ctx context.Context, req *pb.SignupReq) (*pb.AuthR
 
 	ah.UserRepo.SaveUser(user)
 
-	// Gen token
-	token, err := security.GenToken(user)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
+	cache.SetCache(ah.RdCache, "user", user)
 
 	return &pb.AuthRes{
 		Email: req.Email,
 		Role:  role,
-		Token: token,
 	}, nil
 
 }
 
 func (ah *AuthHandler) Login(ctx context.Context, req *pb.LoginReq) (*pb.AuthRes, error) {
-	return nil, nil
+
+	user, err := ah.UserRepo.CheckLogin(req.Email)
+	if err != nil {
+		return nil, &fiber.Error{
+			Code:    fiber.StatusUnauthorized,
+			Message: "Wrong email",
+		}
+	}
+
+	isTruePass := security.ComparePasswords(user.Password, []byte(req.Password))
+	if !isTruePass {
+		return nil, &fiber.Error{
+			Code:    fiber.StatusUnauthorized,
+			Message: "Wrong password",
+		}
+	}
+
+	cache.SetCache(ah.RdCache, "user", user)
+
+	result := &pb.AuthRes{
+		Email: user.Email,
+		Role:  user.Role,
+	}
+
+	return result, nil
 }

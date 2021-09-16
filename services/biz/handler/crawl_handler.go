@@ -58,6 +58,8 @@ func (ch *CrawlHandler) insertFirst(req []*pb_crawl.CrawledFilm) {
 }
 
 func (ch *CrawlHandler) updateFilm(cfilms []entity.Film, rqFilms []*pb_crawl.CrawledFilm) {
+	log.Println("updateFilm cFilms", cfilms)
+	// log.Println("updateFilm rqFilms", rqFilms)
 
 	for i := 0; i < len(rqFilms); i++ {
 		isInsert := true

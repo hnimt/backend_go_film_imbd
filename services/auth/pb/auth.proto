@@ -18,7 +18,6 @@ message LoginReq {
 message AuthRes {
     string email = 1;
     string role = 2;
-    string token = 3;
 }
 
 service AuthService {

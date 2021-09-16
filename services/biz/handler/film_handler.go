@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"log"
 	"micro_backend_film/config/cache"
 	"micro_backend_film/pkg/entity"
 	"micro_backend_film/services/biz/pb/pb_film"
@@ -18,6 +19,16 @@ type FilmHandler struct {
 func (fh *FilmHandler) AllFilms(ctx context.Context, req *pb_film.ReqAllFilms) (*pb_film.ResAllFilms, error) {
 	var cFilms []entity.Film
 	cache.GetCache(fh.RedisCache, "films", &cFilms)
+
+	if len(cFilms) == 0 {
+		rpFilms, err := fh.FilmRepo.FindAll()
+		if err != nil {
+			log.Println("AllFilms error allfilms")
+		}
+		cache.SetCache(fh.RedisCache, "films", rpFilms)
+		cache.GetCache(fh.RedisCache, "films", &cFilms)
+		log.Println("AllFilms add cache from repo")
+	}
 
 	res := &pb_film.ResAllFilms{}
 

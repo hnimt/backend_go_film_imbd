@@ -3,11 +3,17 @@ package middleware
 import (
 	"micro_backend_film/pkg/security"
 
+	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v3"
 )
 
-func JwtMiddleWare() {
-	jwtware.New(jwtware.Config{
+func JwtMiddleware() func(ctx *fiber.Ctx) error {
+	return jwtware.New(jwtware.Config{
+		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Unauthorized",
+			})
+		},
 		SigningKey: []byte(security.JWT_KEY),
 	})
 }
