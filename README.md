@@ -2,7 +2,7 @@
 
 ## Project Architecture
 
-![alt text](architecture.png)
+![alt text](./architecture.png)
 
 ---
 
