@@ -2,7 +2,7 @@
 
 ## Project Architecture
 
-![alt text](./architecture.png)
+![This is an image](/architecture.jpeg)
 
 ---
 
