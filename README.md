@@ -50,38 +50,42 @@
 │   └── grpc
 │       ├── client.go
 │       └── client_config.go
+├── config.go
+├── config.toml
 ├── go.mod
 ├── go.sum
-└── services
-    ├── auth
-    │   ├── handler
-    │   │   └── auth_handler.go
-    │   └── pb
-    │       ├── auth.pb.go
-    │       └── auth.proto
-    ├── biz
-    │   ├── handler
-    │   │   ├── crawl_handler.go
-    │   │   └── film_handler.go
-    │   └── pb
-    │       ├── pb_crawl
-    │       │   ├── crawl.pb.go
-    │       │   └── crawl.proto
-    │       └── pb_film
-    │           ├── film.pb.go
-    │           └── film.proto
-    ├── bookmark
-    │   ├── handler
-    │   │   └── bookmark_handler.go
-    │   └── pb
-    │       ├── bookmark.pb.go
-    │       └── bookmark.proto
-    ├── crawler
-    │   └── handler
-    │       └── hander_crawl.go
-    └── gate
-        └── handler
-            ├── auth_handler.go
-            ├── bookmark_handler.go
-            └── film_handler.go
+├── services
+│   ├── auth
+│   │   ├── handler
+│   │   │   └── auth_handler.go
+│   │   └── pb
+│   │       ├── auth.pb.go
+│   │       └── auth.proto
+│   ├── biz
+│   │   ├── handler
+│   │   │   ├── crawl_handler.go
+│   │   │   └── film_handler.go
+│   │   └── pb
+│   │       ├── pb_crawl
+│   │       │   ├── crawl.pb.go
+│   │       │   └── crawl.proto
+│   │       └── pb_film
+│   │           ├── film.pb.go
+│   │           └── film.proto
+│   ├── bookmark
+│   │   ├── handler
+│   │   │   └── bookmark_handler.go
+│   │   └── pb
+│   │       ├── bookmark.pb.go
+│   │       └── bookmark.proto
+│   ├── crawler
+│   │   └── handler
+│   │       └── hander_crawl.go
+│   └── gate
+│       └── handler
+│           ├── auth_handler.go
+│           ├── bookmark_handler.go
+│           └── film_handler.go
+└── sql
+    └── index.sql
 ```
