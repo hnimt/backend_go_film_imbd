@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	microbackendfilm "micro_backend_film"
 	"micro_backend_film/common/repo"
 	"micro_backend_film/config/cache"
 	"micro_backend_film/config/db"
@@ -14,19 +15,22 @@ import (
 )
 
 func main() {
-	lis, err := net.Listen("tcp", ":8081")
+	// Config
+	config := microbackendfilm.Config()
+
+	lis, err := net.Listen(config.Services["biz"].Prot, config.Services["biz"].Port)
 	if err != nil {
-		log.Fatalf("Failed to listen on port 8081: %v", err)
+		log.Fatalf("Failed to listen %v", err)
 	}
 
 	// DB
-	db := db.ConnectPostgres()
+	db := db.ConnectPostgres(config)
 	filmRepo := &repo.FilmRepo{
 		DB: db,
 	}
 
 	// Redis
-	red := cache.ConnectRedis()
+	red := cache.ConnectRedis(config)
 
 	// Handler
 	crawlHandler := &handler.CrawlHandler{RedisCache: red, FilmRepo: filmRepo}
@@ -39,6 +43,6 @@ func main() {
 	pb_film.RegisterBizServiceServer(grpcServer, filmHandler)
 
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve gRPC server over port 8081: %v", err)
+		log.Fatalf("Failed to serve gRPC server %v", err)
 	}
 }

@@ -1,0 +1,30 @@
+[database]
+host = "127.0.0.1"
+port = "5432"
+name = "go_compare_price"
+user = "postgres"
+pass = "minh123"
+
+[redis]
+host = "localhost:6379"
+pass = ""
+db = "0"
+
+[servers]
+
+    [servers.gate]
+    port = ":8080"
+
+[services]
+
+    [services.biz]
+    prot = "tcp"
+    port = ":8081"
+
+    [services.auth]
+    prot = "tcp"
+    port = ":8082"
+
+    [services.bookmark]
+    prot = "tcp"
+    port = ":8083"

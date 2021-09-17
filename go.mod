@@ -3,6 +3,7 @@ module micro_backend_film
 go 1.17
 
 require (
+	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/PuerkitoBio/goquery v1.7.1 // indirect
 	github.com/andybalholm/brotli v1.0.2 // indirect
 	github.com/andybalholm/cascadia v1.2.0 // indirect

@@ -2,30 +2,34 @@ package main
 
 import (
 	"log"
+	microbackendfilm "micro_backend_film"
+	"micro_backend_film/common/repo"
 	"micro_backend_film/config/cache"
 	"micro_backend_film/config/db"
 	"micro_backend_film/services/auth/handler"
 	"micro_backend_film/services/auth/pb"
-	"micro_backend_film/common/repo"
 	"net"
 
 	"google.golang.org/grpc"
 )
 
 func main() {
-	lis, err := net.Listen("tcp", ":8082")
+	// Config
+	config := microbackendfilm.Config()
+
+	lis, err := net.Listen(config.Services["auth"].Prot, config.Services["auth"].Port)
 	if err != nil {
-		log.Fatalf("Failed to listen on port 8082: %v", err)
+		log.Fatalf("Failed to listen %v", err)
 	}
 
 	// DB
-	db := db.ConnectPostgres()
+	db := db.ConnectPostgres(config)
 	userRepo := &repo.UserRepo{
 		DB: db,
 	}
 
 	// Redis
-	red := cache.ConnectRedis()
+	red := cache.ConnectRedis(config)
 
 	// Handler
 	authHander := &handler.AuthHandler{
@@ -39,6 +43,6 @@ func main() {
 	pb.RegisterAuthServiceServer(grpcServer, authHander)
 
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve gRPC server over port 8082: %v", err)
+		log.Fatalf("Failed to serve gRPC server %v", err)
 	}
 }

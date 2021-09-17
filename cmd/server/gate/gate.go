@@ -1,6 +1,7 @@
 package main
 
 import (
+	microbackendfilm "micro_backend_film"
 	"micro_backend_film/common/middleware"
 	"micro_backend_film/services/gate/handler"
 
@@ -8,6 +9,9 @@ import (
 )
 
 func main() {
+	// Config
+	config := microbackendfilm.Config()
+
 	app := fiber.New()
 
 	// Handler
@@ -28,5 +32,5 @@ func main() {
 	bm.Post("/add", bmHandler.HandleAddBM)
 	bm.Post("/del", bmHandler.HandleDelBM)
 
-	app.Listen(":8080")
+	app.Listen(config.Servers["gate"].Port)
 }

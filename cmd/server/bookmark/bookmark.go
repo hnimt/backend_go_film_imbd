@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	microbackendfilm "micro_backend_film"
 	"micro_backend_film/common/repo"
 	"micro_backend_film/config/db"
 	"micro_backend_film/services/bookmark/handler"
@@ -12,13 +13,16 @@ import (
 )
 
 func main() {
-	lis, err := net.Listen("tcp", ":8083")
+	// Config
+	config := microbackendfilm.Config()
+
+	lis, err := net.Listen(config.Services["bookmark"].Prot, config.Services["bookmark"].Port)
 	if err != nil {
-		log.Fatalf("Failed to listen on port 8083: %v", err)
+		log.Fatalf("Failed to listen on port %v: %v", err, config.Services["bookmark"].Port)
 	}
 
 	// DB
-	db := db.ConnectPostgres()
+	db := db.ConnectPostgres(config)
 	bmRepo := &repo.BookmarkRepo{
 		DB: db,
 	}
@@ -32,6 +36,6 @@ func main() {
 	pb.RegisterBookmarkServiceServer(grpcServer, bmHandler)
 
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve gRPC server over port 8083: %v", err)
+		log.Fatalf("Failed to serve gRPC server over port %v: %v", err, config.Services["bookmark"].Port)
 	}
 }

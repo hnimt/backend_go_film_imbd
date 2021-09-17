@@ -3,16 +3,23 @@ package cache
 import (
 	"encoding/json"
 	"log"
+	microbackendfilm "micro_backend_film"
+	"strconv"
 	"time"
 
 	"github.com/go-redis/redis"
 )
 
-func ConnectRedis() *redis.Client {
+func ConnectRedis(config microbackendfilm.TomlConfig) *redis.Client {
+	db, err := strconv.Atoi(config.Redis.Db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	red := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr:     config.Redis.Host,
+		Password: config.Redis.Pass, // no password set
+		DB:       db,                // use default DB
 	})
 	log.Println("Connect redis successfully")
 	return red
