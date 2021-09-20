@@ -19,12 +19,12 @@ db = "0"
 
     [services.biz]
     prot = "tcp"
-    port = ":8081"
+    port = ":8082"
 
     [services.auth]
     prot = "tcp"
-    port = ":8082"
+    port = ":8083"
 
     [services.bookmark]
     prot = "tcp"
-    port = ":8083"
+    port = ":8084"
