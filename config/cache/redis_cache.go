@@ -3,14 +3,14 @@ package cache
 import (
 	"encoding/json"
 	"log"
-	microbackendfilm "micro_backend_film"
+	"micro_backend_film/config"
 	"strconv"
 	"time"
 
 	"github.com/go-redis/redis"
 )
 
-func ConnectRedis(config microbackendfilm.TomlConfig) *redis.Client {
+func ConnectRedis(config config.TomlConfig) *redis.Client {
 	db, err := strconv.Atoi(config.Redis.Db)
 	if err != nil {
 		log.Fatal(err)

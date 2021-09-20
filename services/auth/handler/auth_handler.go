@@ -20,14 +20,6 @@ type AuthHandler struct {
 
 func (ah *AuthHandler) Signup(ctx context.Context, req *pb.SignupReq) (*pb.AuthRes, error) {
 
-	isDuplicateEmail, _ := ah.UserRepo.IsDuplicateEmail(req.Email)
-	if !isDuplicateEmail {
-		return nil, &fiber.Error{
-			Code:    fiber.StatusUnauthorized,
-			Message: "Duplicated email",
-		}
-	}
-
 	hashPwd := security.HashAndSalt([]byte(req.Password))
 	role := "MEMBER"
 	userId := uuid.NewString()
@@ -40,10 +32,17 @@ func (ah *AuthHandler) Signup(ctx context.Context, req *pb.SignupReq) (*pb.AuthR
 		Token:    "",
 	}
 
-	ah.UserRepo.SaveUser(user)
-	cache.SetCache(ah.RdCache, "user", user)
+	savedUser, err := ah.UserRepo.SaveUser(user)
+	if err != nil {
+		return nil, &fiber.Error{
+			Code:    fiber.StatusUnauthorized,
+			Message: err.Error(),
+		}
+	}
 
-	token, _ := security.GenToken(user.UserID, user.Role)
+	cache.SetCache(ah.RdCache, "user", savedUser)
+
+	token, _ := security.GenToken(savedUser.UserID, savedUser.Role)
 
 	return &pb.AuthRes{
 		Email: req.Email,
@@ -59,7 +58,7 @@ func (ah *AuthHandler) Login(ctx context.Context, req *pb.LoginReq) (*pb.AuthRes
 	if err != nil {
 		return nil, &fiber.Error{
 			Code:    fiber.StatusUnauthorized,
-			Message: "Wrong email",
+			Message: err.Error(),
 		}
 	}
 

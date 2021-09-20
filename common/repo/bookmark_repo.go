@@ -1,28 +1,39 @@
 package repo
 
 import (
+	"log"
 	"micro_backend_film/common/entity"
+	"micro_backend_film/common/exception"
 
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
 type BookmarkRepo struct {
-	DB *gorm.DB
+	DB *sqlx.DB
 }
 
 func (b *BookmarkRepo) AddBM(bookmark entity.Bookmark) (entity.Bookmark, error) {
-	result := b.DB.Save(&bookmark)
-	b.DB.Preload("User").Preload("Film").Find(&bookmark)
-	return bookmark, result.Error
+	sql := `
+		INSERT INTO bookmarks(b_id, user_id, film_id)
+		VALUES(:b_id, :user_id, :film_id)
+	`
+
+	_, err := b.DB.NamedExec(sql, bookmark)
+	if err != nil {
+		log.Println(err)
+		return bookmark, exception.BMNotCreated
+	}
+
+	return bookmark, nil
 }
 
 func (b *BookmarkRepo) RemoveByUserAndFilm(userID string, filmID string) error {
-	result := b.DB.Where("user_id = ? AND film_id = ?", userID, filmID).Delete(&entity.Bookmark{})
-	return result.Error
+	_, err := b.DB.Exec("DELETE FROM bookmarks WHERE user_id = ? AND film_id = ?", userID, filmID)
+	if err != nil {
+		log.Println(err)
+		return exception.BMNotDeleted
+	}
+
+	return nil
 }
 
-func (b *BookmarkRepo) FindBMByUser(userID string) ([]entity.Bookmark, error) {
-	bookmarks := []entity.Bookmark{}
-	result := b.DB.Where("user_id = ?", userID).Preload("Film").Find(&bookmarks)
-	return bookmarks, result.Error
-}

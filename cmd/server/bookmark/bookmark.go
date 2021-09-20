@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	microbackendfilm "micro_backend_film"
+	"micro_backend_film/config"
 	"micro_backend_film/common/repo"
 	"micro_backend_film/config/db"
 	"micro_backend_film/services/bookmark/handler"
@@ -14,7 +14,7 @@ import (
 
 func main() {
 	// Config
-	config := microbackendfilm.Config()
+	config := config.Config()
 
 	lis, err := net.Listen(config.Services["bookmark"].Prot, config.Services["bookmark"].Port)
 	if err != nil {
@@ -22,7 +22,7 @@ func main() {
 	}
 
 	// DB
-	db := db.ConnectPostgres(config)
+	db := db.Connect(config)
 	bmRepo := &repo.BookmarkRepo{
 		DB: db,
 	}

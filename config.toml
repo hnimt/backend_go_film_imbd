@@ -1,9 +1,10 @@
 [database]
+type = "mysql"
 host = "127.0.0.1"
-port = "5432"
-name = "go_compare_price"
-user = "postgres"
-pass = "minh123"
+port = 3306
+name = "micro_imbd"
+user = "user"
+pass = "user"
 
 [redis]
 host = "localhost:6379"

@@ -1,4 +1,4 @@
-package microbackendfilm
+package config
 
 import (
 	"log"
@@ -14,8 +14,9 @@ type TomlConfig struct {
 }
 
 type database struct {
+	Type string
 	Host string
-	Port string
+	Port int64
 	Name string
 	User string
 	Pass string

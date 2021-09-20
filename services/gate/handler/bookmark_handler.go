@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"log"
 	"micro_backend_film/common/model"
 	"micro_backend_film/common/model/req"
 	"micro_backend_film/config/grpc"
@@ -33,6 +34,8 @@ func (bm *BMHandler) HandleAddBM(c *fiber.Ctx) error {
 		FilmID: reqAddBM.FilmID,
 	}
 
+	log.Println(reqAdd)
+
 	res, err := grpc.BMClient.AddBookmark(context.Background(), reqAdd)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(model.Response{
@@ -45,7 +48,7 @@ func (bm *BMHandler) HandleAddBM(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(model.Response{
 		Status: fiber.StatusOK,
 		Msg:    "Add book mark successfully",
-		Data:   res.Film,
+		Data:   res,
 	})
 
 }
@@ -82,31 +85,6 @@ func (bm *BMHandler) HandleDelBM(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(model.Response{
 		Status: fiber.StatusOK,
 		Msg:    "Delete bookmark successfully",
-		Data:   res,
-	})
-}
-
-func (bm *BMHandler) HandleFindByUser(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["userId"].(string)
-
-	reqFind := &pb.ReqFindByUser{
-		UserID: userId,
-	}
-
-	res, err := grpc.BMClient.FindByUser(context.Background(), reqFind)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(model.Response{
-			Status: fiber.StatusBadRequest,
-			Msg:    err.Error(),
-			Data:   nil,
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(model.Response{
-		Status: fiber.StatusOK,
-		Msg:    "Find successfully",
 		Data:   res,
 	})
 }

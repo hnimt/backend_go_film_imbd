@@ -2,10 +2,10 @@ package handler
 
 import (
 	"log"
-	"micro_backend_film/config/cache"
 	"micro_backend_film/common/entity"
-	"micro_backend_film/services/biz/pb/pb_crawl"
 	"micro_backend_film/common/repo"
+	"micro_backend_film/config/cache"
+	"micro_backend_film/services/biz/pb/pb_crawl"
 
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"
@@ -49,7 +49,10 @@ func (ch *CrawlHandler) insertFirst(req []*pb_crawl.CrawledFilm) {
 		film.Name = v.Name
 		film.Year = v.Year
 		film.Rating = v.Rating
-		savedFilm := ch.FilmRepo.SaveFilm(film)
+		savedFilm, err := ch.FilmRepo.SaveFilm(film)
+		if err != nil {
+			log.Println(err)
+		}
 		films = append(films, savedFilm)
 	}
 
@@ -71,7 +74,11 @@ func (ch *CrawlHandler) updateFilm(cfilms []entity.Film, rqFilms []*pb_crawl.Cra
 					cfilms[j].Year = rqFilms[i].Year
 					cfilms[j].Rating = rqFilms[i].Rating
 
-					ch.FilmRepo.SaveFilm(cfilms[j])
+					_, err := ch.FilmRepo.UpdateFilm(cfilms[j])
+					if err != nil {
+						log.Println(err)
+					}
+
 					log.Println("Update")
 				}
 				isInsert = false
@@ -85,7 +92,10 @@ func (ch *CrawlHandler) updateFilm(cfilms []entity.Film, rqFilms []*pb_crawl.Cra
 			film.Name = rqFilms[i].Name
 			film.Year = rqFilms[i].Year
 			film.Rating = rqFilms[i].Rating
-			savedFilm := ch.FilmRepo.SaveFilm(film)
+			savedFilm, err := ch.FilmRepo.SaveFilm(film)
+			if err != nil {
+				log.Println(err)
+			}
 			cfilms = append(cfilms, savedFilm)
 			log.Println("Insert")
 		}

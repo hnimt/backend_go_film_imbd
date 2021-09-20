@@ -1,8 +1,8 @@
 package main
 
 import (
-	microbackendfilm "micro_backend_film"
 	"micro_backend_film/common/middleware"
+	"micro_backend_film/config"
 	"micro_backend_film/services/gate/handler"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Config
-	config := microbackendfilm.Config()
+	config := config.Config()
 
 	app := fiber.New()
 
@@ -20,15 +20,14 @@ func main() {
 	bmHandler := &handler.BMHandler{}
 
 	// Router
-	films := app.Group("/films")
-	films.Get("/", filmHandler.AllFilms)
-
 	auth := app.Group("/auth")
 	auth.Post("/signup", authHandler.Signup)
 	auth.Post("/login", authHandler.Login)
 
+	films := app.Group("/films", middleware.JwtMiddleware())
+	films.Get("/", filmHandler.FindFilmsByUser)
+
 	bm := app.Group("/bookmark", middleware.JwtMiddleware())
-	bm.Get("/", bmHandler.HandleFindByUser)
 	bm.Post("/add", bmHandler.HandleAddBM)
 	bm.Post("/del", bmHandler.HandleDelBM)
 

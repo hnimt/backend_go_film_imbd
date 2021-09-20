@@ -9,6 +9,8 @@ message Film {
     string Name = 2;
     string Year = 3;
     double Rating = 4;
+    string Image = 5;
+    string Bookmarked = 6;
 }
 
 message ReqAllFilms {}
@@ -17,6 +19,15 @@ message ResAllFilms {
     repeated Film Films = 1;
 }
 
+message ReqFindFilmsByUser {
+    string UserID = 1;
+}
+
+message ResFindFilmsByUser {
+    repeated Film Films = 1;
+}
+
 service BizService {
-    rpc AllFilms (ReqAllFilms) returns (ResAllFilms) {};
+    rpc AllFilms (ReqAllFilms) returns (ResAllFilms) {}
+    rpc FindFilmsByUser (ReqFindFilmsByUser) returns (ResFindFilmsByUser) {}
 }

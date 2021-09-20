@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	microbackendfilm "micro_backend_film"
+	"micro_backend_film/config"
 	"micro_backend_film/common/repo"
 	"micro_backend_film/config/cache"
 	"micro_backend_film/config/db"
@@ -16,7 +16,7 @@ import (
 
 func main() {
 	// Config
-	config := microbackendfilm.Config()
+	config := config.Config()
 
 	lis, err := net.Listen(config.Services["biz"].Prot, config.Services["biz"].Port)
 	if err != nil {
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	// DB
-	db := db.ConnectPostgres(config)
+	db := db.Connect(config)
 	filmRepo := &repo.FilmRepo{
 		DB: db,
 	}
