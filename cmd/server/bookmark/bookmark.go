@@ -2,8 +2,9 @@ package main
 
 import (
 	"log"
-	"micro_backend_film/config"
 	"micro_backend_film/common/repo"
+	"micro_backend_film/config"
+	"micro_backend_film/config/cache"
 	"micro_backend_film/config/db"
 	"micro_backend_film/services/bookmark/handler"
 	"micro_backend_film/services/bookmark/pb"
@@ -27,8 +28,14 @@ func main() {
 		DB: db,
 	}
 
+	// Redis
+	red := cache.ConnectRedis(config)
+
 	// Handler
-	bmHandler := &handler.BookmarkHandler{BMRepo: bmRepo}
+	bmHandler := &handler.BookmarkHandler{
+		BMRepo:     bmRepo,
+		RedisCache: red,
+	}
 
 	// GRPC
 	grpcServer := grpc.NewServer()

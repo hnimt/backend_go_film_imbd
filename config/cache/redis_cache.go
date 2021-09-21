@@ -37,14 +37,16 @@ func SetCache(red *redis.Client, key string, value interface{}) {
 	}
 }
 
-func GetCache(red *redis.Client, key string, dest interface{}) {
+func GetCache(red *redis.Client, key string, dest interface{}) error {
 	val, err := red.Get(key).Result()
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	err = json.Unmarshal([]byte(val), &dest)
 	if err != nil {
-		log.Println(err)
+		return err
 	}
+
+	return nil
 }

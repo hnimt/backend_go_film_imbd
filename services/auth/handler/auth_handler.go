@@ -40,16 +40,15 @@ func (ah *AuthHandler) Signup(ctx context.Context, req *pb.SignupReq) (*pb.AuthR
 		}
 	}
 
-	cache.SetCache(ah.RdCache, "user", savedUser)
-
 	token, _ := security.GenToken(savedUser.UserID, savedUser.Role)
+	user.Token = token
+	cache.SetCache(ah.RdCache, "user", user)
 
 	return &pb.AuthRes{
 		Email: req.Email,
 		Role:  role,
 		Token: token,
 	}, nil
-
 }
 
 func (ah *AuthHandler) Login(ctx context.Context, req *pb.LoginReq) (*pb.AuthRes, error) {
@@ -70,9 +69,9 @@ func (ah *AuthHandler) Login(ctx context.Context, req *pb.LoginReq) (*pb.AuthRes
 		}
 	}
 
-	cache.SetCache(ah.RdCache, "user", user)
-
 	token, _ := security.GenToken(user.UserID, user.Role)
+	user.Token = token
+	cache.SetCache(ah.RdCache, "user", user)
 
 	return &pb.AuthRes{
 		Email: user.Email,

@@ -29,7 +29,7 @@ func main() {
 
 	bm := app.Group("/bookmark", middleware.JwtMiddleware())
 	bm.Post("/add", bmHandler.HandleAddBM)
-	bm.Post("/del", bmHandler.HandleDelBM)
+	bm.Put("/del", bmHandler.HandleDelBM)
 
 	app.Listen(config.Servers["gate"].Port)
 }

@@ -51,37 +51,63 @@ func (fh *FilmHandler) FindFilmsByUser(ctx context.Context, req *pb_film.ReqFind
 
 	res := &pb_film.ResFindFilmsByUser{}
 
-	bookmarkedFilms, err := fh.FilmRepo.FindBookmarkedFilms(req.UserID)
-	if err != nil {
-		return nil, exception.FilmNotFound
+	var cFilms []entity.Film
+	cache.GetCache(fh.RedisCache, req.UserID, &cFilms)
+
+	if cFilms == nil || len(cFilms) == 0 {
+		bookmarkedFilms, err := fh.FilmRepo.FindBookmarkedFilms(req.UserID)
+		if err != nil {
+			return nil, exception.FilmNotFound
+		}
+
+		for _, v := range bookmarkedFilms {
+			v.Bookmarked = "true"
+			cFilms = append(cFilms, v)
+			res.Films = append(res.Films, &pb_film.Film{
+				ID:         v.FilmID,
+				Name:       v.Name,
+				Year:       v.Year,
+				Rating:     v.Rating,
+				Image:      v.Image,
+				Bookmarked: v.Bookmarked,
+			})
+		}
+
+		noBookmarkedFilms, err := fh.FilmRepo.FindNoBookmarkedFilms(req.UserID)
+		if err != nil {
+			return nil, exception.FilmNotFound
+		}
+
+		for _, v := range noBookmarkedFilms {
+			v.Bookmarked = "false"
+			cFilms = append(cFilms, v)
+			res.Films = append(res.Films, &pb_film.Film{
+				ID:         v.FilmID,
+				Name:       v.Name,
+				Year:       v.Year,
+				Rating:     v.Rating,
+				Image:      v.Image,
+				Bookmarked: v.Bookmarked,
+			})
+		}
+
+		log.Println("Set cache film by user")
+		cache.SetCache(fh.RedisCache, req.UserID, cFilms)
+		return res, nil
 	}
 
-	for _, v := range bookmarkedFilms {
+	for _, v := range cFilms {
 		res.Films = append(res.Films, &pb_film.Film{
 			ID:         v.FilmID,
 			Name:       v.Name,
 			Year:       v.Year,
 			Rating:     v.Rating,
 			Image:      v.Image,
-			Bookmarked: "true",
+			Bookmarked: v.Bookmarked,
 		})
 	}
 
-	noBookmarkedFilms, err := fh.FilmRepo.FindNoBookmarkedFilms(req.UserID)
-	if err != nil {
-		return nil, exception.FilmNotFound
-	}
-
-	for _, v := range noBookmarkedFilms {
-		res.Films = append(res.Films, &pb_film.Film{
-			ID:         v.FilmID,
-			Name:       v.Name,
-			Year:       v.Year,
-			Rating:     v.Rating,
-			Image:      v.Image,
-			Bookmarked: "false",
-		})
-	}
-
+	log.Println("Get cache film by user")
 	return res, nil
+
 }
